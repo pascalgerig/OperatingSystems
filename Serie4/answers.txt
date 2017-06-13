@@ -1,0 +1,30 @@
+a)
+stat file1.txt liefert:
+
+ File: 'file1.txt'
+  Size: 168       	Blocks: 8          IO Block: 4096   regular file
+Device: 801h/2049d	Inode: 2383860     Links: 1
+Access: (0664/-rw-rw-r--)  Uid: ( 1000/  pascal)   Gid: ( 1000/  pascal)
+Access: 2017-05-14 17:40:42.905630159 +0200
+Modify: 2016-03-09 17:46:00.000000000 +0100
+Change: 2017-05-14 17:40:27.821471213 +0200
+ Birth: -
+
+b)
+Befehl: ln file1.txt file2.txt
+Die files haben selbe Inode-nr und denselben Text (sowohl vor als auch nach bearbeitung von file2)
+
+c)
+file2 existiert noch weil es sich um einen hardlink handelt.
+Die Datei hat einen counter, der die anzahl hardlinks zählt, die datei wird nur gelöscht sofern dieser counter 0 ist, ansonsten wird einfach der hardlink entfernt.
+
+Strace zeigt schritt für schritt an was (in diesem fall) bei rm file2.txt geschieht.
+System Call zum löschen: unlinkat(AT_FDCWD, "file2.txt", 0)
+
+d)
+file3 und file4 haben andere inodes!
+
+e)
+auch file3 und file4 haben immer denselben inhalt.
+nachdem file3.txt gelöscht wird ist file4 eine leere .txt
+Da der counter (vgl c)) nur hardlinks und keine softlinks zählt wird beim löschen von file3 die datei gelöscht und nicht nur ein link. Dies hat zur folge dass file4.txt ein link ist der nicht mehr auf eine Datei zeigt, entsprechend erscheint durch das öffnen dieses links kein Text.

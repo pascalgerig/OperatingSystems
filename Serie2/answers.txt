@@ -1,0 +1,9 @@
+Die variable available_resources wird von der Racecondition beeinträchtigt. 
+Durch "ungeschickte" kontextwechsel kann es dazu kommen dass durch die befehle available_resources += count resp. available_resources -= count die Variable auf unbeabsichtigte art und weise verändert wird. Dies liegt daran wie diese Operationen effektiv ausgeführt werden:
+1.) lies die variable aus.
+2.) erhöhe deine Variable um count
+3.) schreibe deine Variable zurück in available_resources
+
+wird der thread zw. 2.) und 3.) unterbrochen, danach führt ein 2. Thread diese schritte aus und zuletzt beendet der 1. Prozess seine Arbeit, so wird der 1. Thread die gesammte Arbeit des 2. überschreiben und es scheint als hätte der 2. Thread gar nie die Variable bearbeitet.
+Zusammengefasst: durch ungünstige kontextwechsel kann die variable verfälscht werden.
+
